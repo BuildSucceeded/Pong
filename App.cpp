@@ -52,7 +52,7 @@ void MainApp::RunMessageLoop()
     {
 
         end = std::chrono::steady_clock::now();
-        double elapsed_secs = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() / 1000.0;
+        double elapsed_secs = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;
         begin = end;
 
         long fps = 1 / elapsed_secs;

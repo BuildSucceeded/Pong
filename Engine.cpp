@@ -29,7 +29,7 @@ HRESULT Engine::InitializeD2D(HWND m_hwnd)
     D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pDirect2dFactory);
     m_pDirect2dFactory->CreateHwndRenderTarget(
         D2D1::RenderTargetProperties(),
-        D2D1::HwndRenderTargetProperties(m_hwnd, size),
+        D2D1::HwndRenderTargetProperties(m_hwnd, size, D2D1_PRESENT_OPTIONS_IMMEDIATELY),
         &m_pRenderTarget
     );
 

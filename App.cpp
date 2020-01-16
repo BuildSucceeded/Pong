@@ -46,6 +46,8 @@ void MainApp::RunMessageLoop()
 
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    int frames = 0;
+    double framesTime = 0;
 
     boolean running = true;
     while (running)
@@ -55,10 +57,16 @@ void MainApp::RunMessageLoop()
         double elapsed_secs = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;
         begin = end;
 
-        long fps = 1 / elapsed_secs;
-        WCHAR fpsText[32];
-        swprintf(fpsText, 32, L"Game: %d FPS", fps);
-        SetWindowText(m_hwnd, fpsText);
+        // Display FPS
+        framesTime += elapsed_secs;
+        frames++;
+        if (framesTime > 1) {
+            WCHAR fpsText[32];
+            swprintf(fpsText, 32, L"Game: %d FPS", frames);
+            SetWindowText(m_hwnd, fpsText);
+            frames = 0;
+            framesTime = 0;
+        }
 
         // Messages and user input
         while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

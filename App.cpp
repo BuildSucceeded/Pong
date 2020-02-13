@@ -50,7 +50,7 @@ void MainApp::RunMessageLoop()
     double framesTime = 0;
 
     boolean running = true;
-    while (running)
+    while (running) 
     {
 
         end = std::chrono::steady_clock::now();

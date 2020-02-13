@@ -3,16 +3,19 @@
 #include "Paddle.h"
 #include "Engine.h"
 
-Paddle::Paddle(float xPos) : m_pBlueBrush(NULL)
+Paddle::Paddle(float xPos) : m_pBlueBrush(NULL), m_pWhiteBrush(NULL)
 {
 	// Initializes the position of the paddle with a fixed X position and Y being at the middle of the screen
 	position.x = xPos;
 	position.y = RESOLUTION_Y / 2;
+
+	score = 0;
 }
 
 Paddle::~Paddle()
 {
 	SafeRelease(&m_pBlueBrush);
+	SafeRelease(&m_pWhiteBrush);
 }
 
 void Paddle::Initialize(ID2D1HwndRenderTarget* m_pRenderTarget)
@@ -21,6 +24,33 @@ void Paddle::Initialize(ID2D1HwndRenderTarget* m_pRenderTarget)
 	m_pRenderTarget->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::Blue),
 		&m_pBlueBrush
+	);
+
+	// Initialize text writing factory and format
+	DWriteCreateFactory(
+		DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(m_pDWriteFactory),
+		reinterpret_cast<IUnknown**>(&m_pDWriteFactory)
+	);
+
+	m_pDWriteFactory->CreateTextFormat(
+		L"Verdana",
+		NULL,
+		DWRITE_FONT_WEIGHT_NORMAL,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		50,
+		L"", //locale
+		&m_pTextFormat
+	);
+
+	m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+	m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+
+	m_pRenderTarget->CreateSolidColorBrush(
+		D2D1::ColorF(D2D1::ColorF::White),
+		&m_pWhiteBrush
 	);
 }
 
@@ -69,4 +99,23 @@ void Paddle::Draw(ID2D1HwndRenderTarget* m_pRenderTarget)
 		position.x + 5, position.y + PADDLE_WIDTH / 2
 	);
 	m_pRenderTarget->FillRectangle(&rectangle1, m_pBlueBrush);
+
+	// Draw score
+	D2D1_RECT_F rectangle2 = D2D1::RectF(0, 0, 200, 200);
+	if (position.x < RESOLUTION_X / 2)
+		rectangle2 = D2D1::RectF(RESOLUTION_X - 200, 0, RESOLUTION_X, 200);
+	WCHAR scoreStr[4];
+	swprintf_s(scoreStr, L"%d", score);
+	m_pRenderTarget->DrawText(
+		scoreStr,
+		ARRAYSIZE(scoreStr) - 2,
+		m_pTextFormat,
+		rectangle2,
+		m_pWhiteBrush
+	);
+}
+
+void Paddle::IncreaseScore()
+{
+	score++;
 }

@@ -4,6 +4,7 @@
 #include "Engine.h"
 
 #pragma comment(lib, "d2d1")
+#pragma comment(lib, "dwrite")
 
 Engine::Engine() : m_pDirect2dFactory(NULL), m_pRenderTarget(NULL)
 {
@@ -80,10 +81,12 @@ void Engine::Logic(double elapsedTime)
         if (ball->IsOutsideLeft())
         {
             playing = false;
+            leftPaddle->IncreaseScore();
         }
         if (ball->IsOutsideRight())
         {
             playing = false;
+            rightPaddle->IncreaseScore();
         }
     }
 }
